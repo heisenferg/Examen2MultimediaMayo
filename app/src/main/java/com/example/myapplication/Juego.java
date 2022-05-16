@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
@@ -16,9 +17,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-public class Juego extends SurfaceView implements SurfaceHolder.Callback {
+public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.OnTouchListener  {
 
     private SurfaceHolder holder;
     private BucleJuego bucle;
@@ -26,7 +28,22 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
     Random aleatorio = new Random();
     Activity activity;
     private int AnchoPantalla,AltoPantalla;
-   
+   // int touchX, touchY, index;
+
+    public int conejoX, conejoY;
+    Bitmap conejo;
+    int punteroConejo=0;
+    float velocidad;
+    boolean hayToque=false;
+    private ArrayList<Toque> toques = new ArrayList<Toque>();
+    private Control[] controles = new Control[4];
+    private final int IZQUIERDA =0;
+    private final int DERECHA =1;
+    private final int ARRIBA = 2;
+    private final int ABAJO = 3;
+    int touchX, touchY, index;
+
+
     private static final String TAG = Juego.class.getSimpleName();
 
     public Juego(Activity context) {
@@ -34,11 +51,22 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
         holder = getHolder();
         holder.addCallback(this);
         activity = context;
+        //Velocidad
+        velocidad = AnchoPantalla/4/bucle.MAX_FPS;
         //Calculamos dimesiones de pantalla.
         dimesionesPantalla();
         //Calculamos posición de madriguera.
         madrigueraX = aleatorio.nextInt(AnchoPantalla);
         madrigueraY = aleatorio.nextInt(AltoPantalla);
+        //Cargamos los controles
+        CargaControles();
+        // Situamos al conejo:
+        conejoX = AnchoPantalla/2;
+        conejoY = AltoPantalla/5*4;
+        //Cargamos conejo
+        conejo = BitmapFactory.decodeResource(getResources(), R.drawable.rabbit);
+        conejo.createScaledBitmap(conejo, 70, 110, true);
+
     }
 
     public void dimesionesPantalla(){
@@ -86,6 +114,33 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
      */
     public void actualizar() {
 
+    contadorFrames++;
+
+        for (int i=0; i<4; i++){
+            if (controles[i].pulsado){
+                Log.d("Control: ", "Se ha pulsado " + controles[i].nombre);
+            }
+        }
+
+        /**
+         * CONTROLES
+         */
+        if (controles[IZQUIERDA].pulsado){
+            if (conejoX >=0) {
+                conejoX = (int) (conejoX - velocidad);
+                punteroConejo++;
+                actualizarSpriteConejo();
+
+            }
+
+        }
+        if (controles[DERECHA].pulsado){
+            //Controlamos que no se salga por la derecha.
+            if (conejoX <AltoPantalla-conejo.getWidth())
+                conejoX = (int) (conejoX + velocidad);
+        }
+
+
 
     }
 
@@ -105,8 +160,33 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas.drawCircle(madrigueraX,madrigueraY,100,p);
 
+        //Dibujar controles
+        p.setAlpha(400);
+        for (int i = 0; i<4; i++){
+            controles[i].Dibujar(canvas, p);
+        }
+
+        //Dibujar conejo:
+        canvas.drawBitmap(conejo, new Rect((int) punteroConejo, 0, (int) (punteroConejo + conejo.getWidth()/4), conejo.getHeight()/4),
+                new Rect((int)conejoX, (int) conejoY-conejo.getHeight(), (int)conejoX+conejo.getWidth()/4, (int) (conejo.getHeight()/4+conejoY)-conejo.getHeight()),
+                null);
+
+
+
     }
 
+    int contadorFrames =0;
+    int estadoConejo=0;
+
+    public void actualizarSpriteConejo(){
+        if (contadorFrames%3==0) {
+            punteroConejo = conejo.getWidth() / 4 * estadoConejo;
+            estadoConejo++;
+            if (estadoConejo > 4) {
+                estadoConejo = 0;
+            }
+        }
+    }
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.d(TAG, "Juego destruido!");
@@ -122,5 +202,80 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+
+
+    // Controles
+    public void CargaControles(){
+        float aux;
+
+        //Izquierda
+        controles[IZQUIERDA]=new Control(getContext(),0,AltoPantalla/5*4);
+        controles[IZQUIERDA].Cargar(R.drawable.izquierda);
+        controles[IZQUIERDA].nombre="Izquieda";
+
+        //Derecha
+        controles[DERECHA]=new Control(getContext(),
+                controles[0].xCoordenada+controles[0].Ancho(), controles[0].yCoordenada);
+        controles[DERECHA].Cargar(R.drawable.derecha);
+        controles[DERECHA].nombre="Derecha";
+
+        //Arriba
+        //aux=6.0f/7.0f*maxX; //en los 6/7 del ancho
+        controles[ARRIBA]=new Control(getContext(),controles[0].xCoordenada,controles[0].yCoordenada-controles[0].Alto());
+        controles[ARRIBA].Cargar(R.drawable.arriba);
+        controles[ARRIBA].nombre="Arriba";
+
+        //Poner música
+        controles[ABAJO] = new Control(getContext(), controles[0].xCoordenada+controles[0].Ancho(), controles[0].yCoordenada-controles[0].Alto());
+        controles[ABAJO].Cargar(R.drawable.abajo);
+        controles[ABAJO].nombre="Abajo";
+    }
+
+
+
+
+
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        // Obtener el pointer asociado con la acción
+        index = event.getActionIndex();
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
+                hayToque = true;
+                touchX = (int) event.getX(index);
+                touchY = (int) event.getY(index);
+                synchronized (this) {
+                    toques.add(index, new Toque(index, touchX, touchY));
+                }
+                // Se comprueba si se ha pulsado.
+                for(int i=0;i<4;i++)
+                    controles[i].comprueba_Pulsado(touchX,touchY);
+                Log.i(Juego.class.getSimpleName(), "Pulsado dedo " + index + ".");
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                synchronized (this) {
+                    toques.remove(index);
+                }
+                // Se comprueba si se ha soltado.
+                for(int i=0;i<4;i++)
+                    controles[i].compruebaSoltado(toques);
+                Log.i(Juego.class.getSimpleName(), "Soltado dedo " + index + ".");
+                break;
+            case MotionEvent.ACTION_UP:
+                synchronized (this) {
+                    toques.remove(index);
+                }
+                // Se comprueba si se ha soltado.
+                for(int i=0;i<4;i++)
+                    controles[i].compruebaSoltado(toques);
+                Log.i(Juego.class.getSimpleName(), "Soltado dedo " + index + ".ultimo.");
+                hayToque = false;
+                break;
+        }
+        return true;
+    }
 
 }
