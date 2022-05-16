@@ -1,7 +1,19 @@
 package com.example.myapplication;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static android.provider.Settings.System.getString;
+import static androidx.core.content.ContextCompat.getSystemService;
+import static androidx.core.content.ContextCompat.startActivities;
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,6 +22,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -17,6 +30,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import androidx.core.app.NotificationCompat;
+
+import java.nio.channels.Channel;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -44,7 +60,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
     int touchX, touchY, index;
     float punteroYConejo =0;
     float estadoConejoY;
-    int contadorFrames =0;
+    public static int contadorFrames =0;
     int estadoConejo=0;
     int estad_altura_conejo=0;
     boolean fin;
@@ -235,10 +251,30 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
 
         if (colisionCirculo()){
 victoriaFindeJuego(p, canvas);
+            Log.d("Fin: ", " 1");
+try {
+    Notificar notificar = new Notificar();
+    Log.d("Fin: ", " 2");
+
+    notificar.enviarNotificacion();
+    Log.d("Fin: ", " 3");
+} catch (Exception e){
+    Log.d("Fin: ", " 4");
+
+}
+abrirParaNotificar(this);
+
         }
 Log.d("Fin: ", " está: " + fin);
 
     }
+
+
+public void abrirParaNotificar (View v){
+    Intent i = new Intent(getContext(), MainActivity.class);
+    v.getContext().startActivity(i);
+}
+
 
     public void victoriaFindeJuego(Paint myPaint, Canvas canvas){
         myPaint.setAlpha(0);

@@ -1,10 +1,20 @@
 package com.example.myapplication;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 
 public class ActividadJuego extends AppCompatActivity {
@@ -37,4 +47,6 @@ public class ActividadJuego extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
