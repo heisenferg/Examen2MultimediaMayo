@@ -55,12 +55,12 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         holder.addCallback(this);
         activity = context;
         //Velocidad
-        velocidad = AnchoPantalla/4;
+        velocidad = 4;
         //Calculamos dimesiones de pantalla.
         dimesionesPantalla();
         //Calculamos posición de madriguera.
-        madrigueraX = aleatorio.nextInt(AnchoPantalla);
-        madrigueraY = aleatorio.nextInt(AltoPantalla);
+        madrigueraX = aleatorio.nextInt(AnchoPantalla) + 50;
+        madrigueraY = aleatorio.nextInt(AltoPantalla) + 50;
         //Cargamos los controles
         CargaControles();
         //Cargamos conejo
@@ -133,7 +133,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
          */
         if (controles[IZQUIERDA].pulsado){
             if (conejoX >=0) {
-                conejoX = (int) (conejoX - 2);
+                conejoX = (int) (conejoX  - 2*velocidad);
                 //punteroConejo++;
                 // Estado conejo es la fila
                 estadoConejoY=0;
@@ -145,26 +145,35 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         if (controles[DERECHA].pulsado){
             //Controlamos que no se salga por la derecha.
             if (conejoX <AnchoPantalla-conejo.getWidth()/4)
-                conejoX = (int) (conejoX + 2);
+                conejoX = (int) (conejoX + 2*velocidad);
             actualizarSpriteConejo();
         }
 
         if (controles[ARRIBA].pulsado){
             if (conejoY>0){
-                    conejoY = (int) (conejoY - 2);
+                    conejoY = (int) (conejoY - 2*velocidad);
                 actualizarSpriteConejo();
             }
         }
         if (controles[ABAJO].pulsado){
             if (conejoY/4<AltoPantalla){
-                conejoY = (int) (conejoY + 2);
+                conejoY = (int) (conejoY + 2*velocidad);
                 actualizarSpriteConejo();
             }
         }
 
 
-Log.d("Toque:", " haytoque=" + hayToque);
+        // Llegada madriguera. 100 es el radio.
+        Log.d("Conejo: ", " ConejoX=" + conejoX + " madrigueraX=" + madrigueraX);
+        Log.d("Conejo: ", " ConejoY=" + (conejoY-(conejo.getHeight()/4)*3) + " madrigueraY=" + madrigueraY);
 
+        if (conejoX < madrigueraX && conejoX+100<=madrigueraX){
+            Log.d("FIN", " Se acabó");
+            if (conejoY-(conejo.getHeight()/4)*3>madrigueraY && conejoY-(conejo.getHeight()/4)*3<=madrigueraY+100){
+                Log.d("FIN2", " Se acabó");
+
+            }
+        }
     }
 
     /**
