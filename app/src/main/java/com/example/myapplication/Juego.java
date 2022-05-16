@@ -137,7 +137,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
                 conejoX = (int) (conejoX  - 2*velocidad);
                 //punteroConejo++;
                 // Estado conejo es la fila
-                estad_altura_conejo=0;
+                estad_altura_conejo=1;
                 punteroYConejo = conejo.getHeight() / 4 * estadoConejoY;
                 actualizarSpriteConejo();
             }
@@ -146,7 +146,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         if (controles[DERECHA].pulsado){
             //Controlamos que no se salga por la derecha.
             if (conejoX <AnchoPantalla-conejo.getWidth()/4)
-                estad_altura_conejo=1;
+                estad_altura_conejo=3;
 
             conejoX = (int) (conejoX + 2*velocidad);
             actualizarSpriteConejo();
@@ -162,7 +162,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         }
         if (controles[ABAJO].pulsado){
             if (conejoY/4<AltoPantalla){
-                estad_altura_conejo=3;
+                estad_altura_conejo=2;
 
                 conejoY = (int) (conejoY + 2*velocidad);
                 actualizarSpriteConejo();
