@@ -55,7 +55,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         holder.addCallback(this);
         activity = context;
         //Velocidad
-        velocidad = AnchoPantalla/4/bucle.MAX_FPS;
+        velocidad = AnchoPantalla/4;
         //Calculamos dimesiones de pantalla.
         dimesionesPantalla();
         //Calculamos posición de madriguera.
@@ -133,7 +133,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
          */
         if (controles[IZQUIERDA].pulsado){
             if (conejoX >=0) {
-                conejoX = (int) (conejoX - velocidad);
+                conejoX = (int) (conejoX - 2);
                 //punteroConejo++;
                 // Estado conejo es la fila
                 estadoConejoY=0;
@@ -144,11 +144,24 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         }
         if (controles[DERECHA].pulsado){
             //Controlamos que no se salga por la derecha.
-            if (conejoX <AltoPantalla-conejo.getWidth())
-                conejoX = (int) (conejoX + velocidad);
+            if (conejoX <AnchoPantalla-conejo.getWidth()/4)
+                conejoX = (int) (conejoX + 2);
             actualizarSpriteConejo();
-
         }
+
+        if (controles[ARRIBA].pulsado){
+            if (conejoY>0){
+                    conejoY = (int) (conejoY - 2);
+                actualizarSpriteConejo();
+            }
+        }
+        if (controles[ABAJO].pulsado){
+            if (conejoY/4<AltoPantalla){
+                conejoY = (int) (conejoY + 2);
+                actualizarSpriteConejo();
+            }
+        }
+
 
 Log.d("Toque:", " haytoque=" + hayToque);
 
