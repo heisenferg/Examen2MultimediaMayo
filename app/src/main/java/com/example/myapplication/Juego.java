@@ -44,6 +44,8 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
     int touchX, touchY, index;
     float punteroYConejo =0;
     float estadoConejoY;
+    int contadorFrames =0;
+    int estadoConejo=0;
 
     private static final String TAG = Juego.class.getSimpleName();
 
@@ -61,12 +63,13 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         madrigueraY = aleatorio.nextInt(AltoPantalla);
         //Cargamos los controles
         CargaControles();
-        // Situamos al conejo:
-        conejoX = AnchoPantalla/2;
-        conejoY = AltoPantalla/5*4;
         //Cargamos conejo
         conejo = BitmapFactory.decodeResource(getResources(), R.drawable.rabbit);
         conejo.createScaledBitmap(conejo, 70, 110, true);
+        // Situamos al conejo:
+        conejoX = AnchoPantalla/2-conejo.getWidth()/5;
+        conejoY = AltoPantalla/4*5;
+
         //Listener del onTouch
         setOnTouchListener(this);
 
@@ -133,9 +136,9 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
                 conejoX = (int) (conejoX - velocidad);
                 //punteroConejo++;
                 // Estado conejo es la fila
+                estadoConejoY=0;
                 punteroYConejo = conejo.getHeight() / 4 * estadoConejoY;
                 actualizarSpriteConejo();
-
             }
 
         }
@@ -182,8 +185,7 @@ Log.d("Toque:", " haytoque=" + hayToque);
 
     }
 
-    int contadorFrames =0;
-    int estadoConejo=0;
+
 
     public void actualizarSpriteConejo(){
         if (contadorFrames%3==0) {
