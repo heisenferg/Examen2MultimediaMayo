@@ -176,17 +176,28 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         Log.d("Conejo: ", " ConejoX=" + (conejoX+conejo.getWidth()/4) + " madrigueraX=" + madrigueraX);
         Log.d("Conejo: ", " ConejoY=" + (conejoY) + " madrigueraY=" + madrigueraY);
 
-
+/*
         if (conejoX+conejo.getWidth()/4 >= madrigueraX-50 && conejoX+conejo.getWidth()/4<=madrigueraX+100){
             Log.d("FIN", " Se acabó");
             if (//conejoY-(conejo.getHeight()/4)*3>madrigueraY && conejoY-(conejo.getHeight()/4)*3<madrigueraY+100) {
             (conejoY >= madrigueraY-50 && conejoY<=madrigueraY+100)){
                 Log.d("FIN2", " Se acabó");
                 fin = true;
+            } else {
+                fin = false;
             }
         }
+*/
 
 
+    }
+
+    public boolean colisionCirculo(){
+        int alto_mayor= Math.max(100, conejo.getHeight()/4);
+        int ancho_mayor= Math.max(100, conejo.getWidth()/4);
+        float diferenciaX=Math.abs(madrigueraX-conejoX);
+        float diferenciaY=Math.abs(madrigueraY-conejoY);
+        return diferenciaX<ancho_mayor && diferenciaY<alto_mayor;
     }
 
     /**
@@ -222,14 +233,27 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
                 null);
 
 
-        if (fin){
-            canvas.drawText("Has ganado, el conejo llegó a salvo.", 50, AnchoPantalla/2, p);
+        if (colisionCirculo()){
+victoriaFindeJuego(p, canvas);
         }
-
+Log.d("Fin: ", " está: " + fin);
 
     }
 
+    public void victoriaFindeJuego(Paint myPaint, Canvas canvas){
+        myPaint.setAlpha(0);
 
+            //Bandera Nazi Victoria
+          //  canvas.drawBitmap(banderaNazi, AnchoPantalla/2-banderaNazi.getWidth()/2, AltoPantalla-banderaNazi.getHeight()*2, null);
+            myPaint.setColor(Color.GREEN);
+            myPaint.setTextSize(AnchoPantalla/10);
+            canvas.drawText("¡Llegaste!", AnchoPantalla/4, AltoPantalla/2-100, myPaint);
+            myPaint.setTextSize(AnchoPantalla/20);
+            canvas.drawText("El conejo se resguardó", AnchoPantalla/4, AltoPantalla/2, myPaint);
+            myPaint.setColor(Color.MAGENTA);
+            canvas.drawText("Acabaste em " + contadorFrames + " frames", AnchoPantalla/5, AltoPantalla/2+100, myPaint);
+            fin();
+        }
 
     public void actualizarSpriteConejo(){
         if (contadorFrames%3==0) {
@@ -240,6 +264,17 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
             }
         }
     }
+
+    // Para liberar recursos
+    public void fin(){
+        bucle.JuegoEnEjecucion=false;
+        try{
+            conejo.recycle();
+        } catch (Exception e){
+            Log.d("Excepción: ", "reproductores");
+        }
+
+    }
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.d(TAG, "Juego destruido!");
@@ -248,6 +283,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         while (retry) {
             try {
                 bucle.join();
+                fin();
                 retry = false;
             } catch (InterruptedException e) {
 
