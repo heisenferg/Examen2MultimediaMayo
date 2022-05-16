@@ -47,6 +47,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
     int contadorFrames =0;
     int estadoConejo=0;
     int estad_altura_conejo=0;
+    boolean fin;
 
     private static final String TAG = Juego.class.getSimpleName();
 
@@ -55,6 +56,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         holder = getHolder();
         holder.addCallback(this);
         activity = context;
+        fin = false;
         //Velocidad
         velocidad = 4;
         //Calculamos dimesiones de pantalla.
@@ -170,6 +172,20 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         }
 
 
+        // Llegada madriguera. 100 es el radio.
+        Log.d("Conejo: ", " ConejoX=" + (conejoX+conejo.getWidth()/4) + " madrigueraX=" + madrigueraX);
+        Log.d("Conejo: ", " ConejoY=" + (conejoY) + " madrigueraY=" + madrigueraY);
+
+
+        if (conejoX+conejo.getWidth()/4 >= madrigueraX-50 && conejoX+conejo.getWidth()/4<=madrigueraX+100){
+            Log.d("FIN", " Se acabó");
+            if (//conejoY-(conejo.getHeight()/4)*3>madrigueraY && conejoY-(conejo.getHeight()/4)*3<madrigueraY+100) {
+            (conejoY >= madrigueraY-50 && conejoY<=madrigueraY+100)){
+                Log.d("FIN2", " Se acabó");
+                fin = true;
+            }
+        }
+
 
     }
 
@@ -205,17 +221,10 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
                 new Rect((int)conejoX,(int) conejoY-conejo.getHeight()*1/4,(int)conejoX+conejo.getWidth()/4,conejoY),
                 null);
 
-        // Llegada madriguera. 100 es el radio.
-        Log.d("Conejo: ", " ConejoX=" + conejoX + " madrigueraX=" + madrigueraX);
-        Log.d("Conejo: ", " ConejoY=" + (conejoY-(conejo.getHeight()/4)*3) + " madrigueraY=" + madrigueraY);
 
-
-        if (conejoX < madrigueraX+100 && conejoX>madrigueraX &&
-        conejoY-(conejo.getHeight()/4)*3>madrigueraY && conejoY-(conejo.getHeight()/4)*3<madrigueraY+100){
-            Log.d("FIN", " Se acabó");
-                Log.d("FIN2", " Se acabó");
-                canvas.drawText("Has ganado, el conejo llegó a salvo.", 50, AnchoPantalla/2, p);
-            }
+        if (fin){
+            canvas.drawText("Has ganado, el conejo llegó a salvo.", 50, AnchoPantalla/2, p);
+        }
 
 
     }
