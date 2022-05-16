@@ -46,6 +46,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
     float estadoConejoY;
     int contadorFrames =0;
     int estadoConejo=0;
+    int estad_altura_conejo=0;
 
     private static final String TAG = Juego.class.getSimpleName();
 
@@ -136,7 +137,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
                 conejoX = (int) (conejoX  - 2*velocidad);
                 //punteroConejo++;
                 // Estado conejo es la fila
-                estadoConejoY=0;
+                estad_altura_conejo=0;
                 punteroYConejo = conejo.getHeight() / 4 * estadoConejoY;
                 actualizarSpriteConejo();
             }
@@ -145,35 +146,31 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         if (controles[DERECHA].pulsado){
             //Controlamos que no se salga por la derecha.
             if (conejoX <AnchoPantalla-conejo.getWidth()/4)
-                conejoX = (int) (conejoX + 2*velocidad);
+                estad_altura_conejo=1;
+
+            conejoX = (int) (conejoX + 2*velocidad);
             actualizarSpriteConejo();
         }
 
         if (controles[ARRIBA].pulsado){
             if (conejoY>0){
-                    conejoY = (int) (conejoY - 2*velocidad);
+                estad_altura_conejo=2;
+
+                conejoY = (int) (conejoY - 2*velocidad);
                 actualizarSpriteConejo();
             }
         }
         if (controles[ABAJO].pulsado){
             if (conejoY/4<AltoPantalla){
+                estad_altura_conejo=3;
+
                 conejoY = (int) (conejoY + 2*velocidad);
                 actualizarSpriteConejo();
             }
         }
 
 
-        // Llegada madriguera. 100 es el radio.
-        Log.d("Conejo: ", " ConejoX=" + conejoX + " madrigueraX=" + madrigueraX);
-        Log.d("Conejo: ", " ConejoY=" + (conejoY-(conejo.getHeight()/4)*3) + " madrigueraY=" + madrigueraY);
 
-        if (conejoX < madrigueraX && conejoX+100<=madrigueraX){
-            Log.d("FIN", " Se acabó");
-            if (conejoY-(conejo.getHeight()/4)*3>madrigueraY && conejoY-(conejo.getHeight()/4)*3<=madrigueraY+100){
-                Log.d("FIN2", " Se acabó");
-
-            }
-        }
     }
 
     /**
@@ -199,10 +196,26 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         }
 
         //Dibujar conejo:
-        canvas.drawBitmap(conejo, new Rect((int) punteroConejo, (int) punteroYConejo, (int) (punteroConejo + conejo.getWidth()/4), conejo.getHeight()/4),
+     /*   canvas.drawBitmap(conejo, new Rect((int) punteroConejo, (int) punteroYConejo, (int) (punteroConejo + conejo.getWidth()/4), conejo.getHeight()/4),
                 new Rect((int)conejoX, (int) conejoY-conejo.getHeight(), (int)conejoX+conejo.getWidth()/4, (int) (conejo.getHeight()/4+conejoY)-conejo.getHeight()),
                 null);
+*/
+        canvas.drawBitmap(conejo,
+                new Rect(punteroConejo,0+(conejo.getHeight()/4)*estad_altura_conejo,punteroConejo+conejo.getWidth()/4,(conejo.getHeight()*1/4)+(conejo.getHeight()/4)*estad_altura_conejo),
+                new Rect((int)conejoX,(int) conejoY-conejo.getHeight()*1/4,(int)conejoX+conejo.getWidth()/4,conejoY),
+                null);
 
+        // Llegada madriguera. 100 es el radio.
+        Log.d("Conejo: ", " ConejoX=" + conejoX + " madrigueraX=" + madrigueraX);
+        Log.d("Conejo: ", " ConejoY=" + (conejoY-(conejo.getHeight()/4)*3) + " madrigueraY=" + madrigueraY);
+
+
+        if (conejoX < madrigueraX+100 && conejoX>madrigueraX &&
+        conejoY-(conejo.getHeight()/4)*3>madrigueraY && conejoY-(conejo.getHeight()/4)*3<madrigueraY+100){
+            Log.d("FIN", " Se acabó");
+                Log.d("FIN2", " Se acabó");
+                canvas.drawText("Has ganado, el conejo llegó a salvo.", 50, AnchoPantalla/2, p);
+            }
 
 
     }
