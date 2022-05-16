@@ -42,7 +42,8 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
     private final int ARRIBA = 2;
     private final int ABAJO = 3;
     int touchX, touchY, index;
-
+    float punteroYConejo =0;
+    float estadoConejoY;
 
     private static final String TAG = Juego.class.getSimpleName();
 
@@ -66,6 +67,8 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         //Cargamos conejo
         conejo = BitmapFactory.decodeResource(getResources(), R.drawable.rabbit);
         conejo.createScaledBitmap(conejo, 70, 110, true);
+        //Listener del onTouch
+        setOnTouchListener(this);
 
     }
 
@@ -128,7 +131,9 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         if (controles[IZQUIERDA].pulsado){
             if (conejoX >=0) {
                 conejoX = (int) (conejoX - velocidad);
-                punteroConejo++;
+                //punteroConejo++;
+                // Estado conejo es la fila
+                punteroYConejo = conejo.getHeight() / 4 * estadoConejoY;
                 actualizarSpriteConejo();
 
             }
@@ -138,9 +143,11 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
             //Controlamos que no se salga por la derecha.
             if (conejoX <AltoPantalla-conejo.getWidth())
                 conejoX = (int) (conejoX + velocidad);
+            actualizarSpriteConejo();
+
         }
 
-
+Log.d("Toque:", " haytoque=" + hayToque);
 
     }
 
@@ -167,7 +174,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         }
 
         //Dibujar conejo:
-        canvas.drawBitmap(conejo, new Rect((int) punteroConejo, 0, (int) (punteroConejo + conejo.getWidth()/4), conejo.getHeight()/4),
+        canvas.drawBitmap(conejo, new Rect((int) punteroConejo, (int) punteroYConejo, (int) (punteroConejo + conejo.getWidth()/4), conejo.getHeight()/4),
                 new Rect((int)conejoX, (int) conejoY-conejo.getHeight(), (int)conejoX+conejo.getWidth()/4, (int) (conejo.getHeight()/4+conejoY)-conejo.getHeight()),
                 null);
 
@@ -182,7 +189,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         if (contadorFrames%3==0) {
             punteroConejo = conejo.getWidth() / 4 * estadoConejo;
             estadoConejo++;
-            if (estadoConejo > 4) {
+            if (estadoConejo >= 4) {
                 estadoConejo = 0;
             }
         }
@@ -238,7 +245,6 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
         // Obtener el pointer asociado con la acción
         index = event.getActionIndex();
         switch (event.getActionMasked()) {
