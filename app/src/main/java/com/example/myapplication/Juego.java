@@ -252,16 +252,7 @@ public class Juego extends SurfaceView  implements SurfaceHolder.Callback, View.
         if (colisionCirculo()){
 victoriaFindeJuego(p, canvas);
             Log.d("Fin: ", " 1");
-try {
-    Notificar notificar = new Notificar();
-    Log.d("Fin: ", " 2");
 
-    notificar.enviarNotificacion();
-    Log.d("Fin: ", " 3");
-} catch (Exception e){
-    Log.d("Fin: ", " 4");
-
-}
 abrirParaNotificar(this);
 
         }

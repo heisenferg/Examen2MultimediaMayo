@@ -64,22 +64,5 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void prueba(){
-        crearCanalNotificaciones();
-        Context context = this;
-        Intent intent = new Intent(context,Juego.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
-        NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        Notification notification = new NotificationCompat.Builder(this.getApplicationContext())//Habrá una línea media aquí, que no afecta la operación, esto esandroidProblema de versión del sistema
-                .setContentTitle("título")  //Mostrar el título de la notificación
-                .setContentText("El contenido de la notificación se muestra aquí.~")//Mostrar el contenido de la notificación del mensaje
-                .setWhen(System.currentTimeMillis())//Mostrar la hora específica de la notificación
-                .setSmallIcon(R.mipmap.ic_launcher)//La configuración que se muestra aquí son los íconos de aplicaciones para notificaciones del sistema en la parte superior del teléfono
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))//Aquí está configurado para mostrar el icono del sistema que se muestra después de que la barra de notificaciones se despliega
-                .setContentIntent(pendingIntent)
-                //.setAutoCancel(true)//Puede usar este método aquí, después de hacer clic en la notificación, el contenido de la notificación se cancela automáticamente,Puede también serNotificationActivity.javaEstablecer el método para cancelar el contenido de la notificación
-                .setVibrate(new long[] {0,1000,1000,1000})//Establezca la vibración durante un segundo después de la notificación, pare durante un segundo y luego vibre durante un segundo.manifest.xmlEstablecer permisos en
-                .build();
-        manager.notify(1,notification);
-    }
+
 }
